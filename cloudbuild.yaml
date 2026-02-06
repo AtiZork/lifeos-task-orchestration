@@ -1,0 +1,52 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/lifeos-task-orchestration:$COMMIT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/lifeos-task-orchestration:latest'
+      - '.'
+
+  # Push the image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/lifeos-task-orchestration:$COMMIT_SHA'
+
+  # Push the latest tag
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/lifeos-task-orchestration:latest'
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'lifeos-task-orchestration'
+      - '--image=gcr.io/$PROJECT_ID/lifeos-task-orchestration:$COMMIT_SHA'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--min-instances=0'
+      - '--max-instances=10'
+      - '--cpu=1'
+      - '--memory=512Mi'
+      - '--timeout=300'
+      - '--set-env-vars=ENVIRONMENT=production,LOG_LEVEL=INFO'
+
+# Store images in Container Registry
+images:
+  - 'gcr.io/$PROJECT_ID/lifeos-task-orchestration:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/lifeos-task-orchestration:latest'
+
+# Build timeout
+timeout: 1200s
+
+# Options
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'N1_HIGHCPU_8'
