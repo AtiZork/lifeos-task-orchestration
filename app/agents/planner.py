@@ -10,7 +10,7 @@ from typing import Any, Dict, List
 
 from app.agents.base import BaseAgent
 from app.models.agent import PlanningResult
-from app.utils import generate_id, get_logger
+from app.utils import generate_id, get_logger, utc_now
 from app.utils.exceptions import AgentExecutionException
 
 logger = get_logger(__name__)
@@ -152,7 +152,7 @@ class PlannerAgent(BaseAgent):
                 steps=plan["steps"],
                 estimated_duration_seconds=plan["estimated_duration_seconds"],
                 dependencies=template["dependencies"],
-                execution_time_ms=(datetime.utcnow() - start_time).total_seconds() * 1000,
+                execution_time_ms=(utc_now() - start_time).total_seconds() * 1000,
                 data={
                     "total_steps": len(plan["steps"]),
                     "workflow_description": template["description"],
