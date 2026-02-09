@@ -4,6 +4,8 @@ LifeOS Task Orchestration Service - Main Application
 FastAPI application entry point with middleware, CORS, and exception handling.
 """
 
+import utils.transport
+import utils.session
 from contextlib import asynccontextmanager
 from typing import Any, Dict
 

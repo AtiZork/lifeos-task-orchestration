@@ -10,7 +10,7 @@ from typing import Any, Dict, List
 
 from app.agents.base import BaseAgent
 from app.models.agent import ExecutionResult
-from app.utils import get_logger
+from app.utils import get_logger, utc_now
 from app.utils.exceptions import AgentExecutionException, TimeoutException
 
 logger = get_logger(__name__)
@@ -73,7 +73,7 @@ class ExecutorAgent(BaseAgent):
                 total_steps=len(steps),
                 step_results=step_results,
                 final_result=final_result,
-                execution_time_ms=(datetime.utcnow() - start_time).total_seconds() * 1000,
+                execution_time_ms=(utc_now() - start_time).total_seconds() * 1000,
                 data={
                     "success_rate": completed_steps / len(steps) if steps else 0,
                 },
